@@ -10,12 +10,13 @@
 
   <style>
     :root {
-      --bg: #000000;
-      --orange: #ff5a00;
-      --blue: #304cc4;
+      --black: #000000;
+      --orange: #ff6500;
+      --blue-ui: #5a9bd2;
+      --blue-border: #3c6f9c;
       --grey: #d8d8d8;
-      --dark-grey: #151515;
       --text-grey: #222222;
+      --white: #ffffff;
     }
 
     * {
@@ -28,9 +29,8 @@
       margin: 0;
       padding: 0;
       min-height: 100%;
-      background: var(--bg);
+      background: var(--black);
       font-family: Arial, Helvetica, sans-serif;
-      color: var(--orange);
     }
 
     body {
@@ -38,6 +38,7 @@
       margin: 0 auto;
       border-left: 1px solid #111;
       border-right: 1px solid #111;
+      overflow-x: hidden;
     }
 
     .fake-status-bar {
@@ -52,9 +53,18 @@
       letter-spacing: 0.2px;
     }
 
-    .screen {
+    .view {
       min-height: calc(100vh - 24px);
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .screen {
       background: #000;
+      color: var(--orange);
       padding-bottom: 18px;
     }
 
@@ -127,7 +137,6 @@
       line-height: 1;
       text-align: center;
       color: #111;
-      transform: rotate(0deg);
     }
 
     .buttons {
@@ -156,8 +165,29 @@
       cursor: default;
     }
 
+    .page-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 7px 2px 0 2px;
+    }
+
+    .page-tabs button {
+      background: #151515;
+      color: var(--orange);
+      border: 1px solid #4b240c;
+      height: 31px;
+      font-weight: bold;
+    }
+
+    .page-tabs button.active-tab {
+      background: var(--orange);
+      color: #000;
+      border-color: var(--orange);
+    }
+
     .values {
-      padding: 26px 1px 0 1px;
+      padding: 20px 1px 0 1px;
       font-size: 20px;
     }
 
@@ -232,13 +262,213 @@
       margin-top: 7px;
     }
 
-    .error {
-      color: #ff7a2b;
+    .summary-screen {
+      background: #000;
+      color: var(--white);
+      padding: 6px 0 18px 0;
     }
 
-    @media (min-height: 760px) {
-      .graph-placeholder { height: 170px; }
-      .brand-card { margin-top: 18px; }
+    .summary-wrap {
+      width: min(100%, 372px);
+      margin: 0 auto;
+      padding: 0 1px;
+    }
+
+    .summary-card {
+      background: var(--blue-ui);
+      border: 2px solid var(--blue-border);
+      border-radius: 56px;
+      min-height: 610px;
+      overflow: hidden;
+      color: #fff;
+      text-align: center;
+      position: relative;
+    }
+
+    .summary-top {
+      padding: 28px 26px 16px;
+    }
+
+    .impact-count-box,
+    .bottom-value-box {
+      border: 2px solid rgba(37, 82, 125, 0.6);
+      background: rgba(91, 157, 214, 0.55);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .impact-count-box {
+      min-width: 170px;
+      height: 61px;
+      font-size: 57px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .summary-title {
+      margin-top: 16px;
+      font-size: 25px;
+      line-height: 1.1;
+      font-weight: 400;
+    }
+
+    .orange-line {
+      height: 2px;
+      background: #df7c24;
+      width: 100%;
+    }
+
+    .force-zone {
+      padding: 20px 26px 12px;
+    }
+
+    .force-circle {
+      width: 188px;
+      height: 188px;
+      border-radius: 50%;
+      border: 2px solid rgba(50, 99, 141, 0.8);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(91, 157, 214, 0.25);
+    }
+
+    .force-main {
+      font-size: 80px;
+      line-height: 0.9;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .force-unit {
+      margin-top: 18px;
+      font-size: 22px;
+      font-weight: 400;
+    }
+
+    .minmax {
+      display: flex;
+      justify-content: space-between;
+      padding: 26px 3px 8px;
+      font-size: 16px;
+    }
+
+    .force-bar {
+      height: 31px;
+      border: 2px solid rgba(50, 99, 141, 0.85);
+      background: rgba(91, 157, 214, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .force-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(180deg, #ff8a27 0%, #ff6500 100%);
+    }
+
+    .force-marker {
+      position: absolute;
+      top: -3px;
+      bottom: -3px;
+      left: 0%;
+      width: 6px;
+      background: #e46a1c;
+      transform: translateX(-3px);
+      border-radius: 2px;
+    }
+
+    .average-force {
+      margin-top: 8px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .summary-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 2px solid #df7c24;
+      min-height: 128px;
+      margin-top: 6px;
+    }
+
+    .bottom-cell {
+      padding: 16px 18px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .bottom-cell:first-child {
+      border-right: 2px solid #df7c24;
+    }
+
+    .bottom-value-box {
+      min-width: 140px;
+      height: 62px;
+      font-size: 42px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .bottom-label {
+      margin-top: 22px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .summary-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 0 2px;
+    }
+
+    .summary-nav button {
+      background: #151515;
+      color: var(--orange);
+      border: 1px solid #4b240c;
+      height: 34px;
+      font-weight: bold;
+    }
+
+    .summary-nav button.active-tab {
+      background: var(--orange);
+      color: #000;
+      border-color: var(--orange);
+    }
+
+    @media (max-width: 360px) {
+      .summary-card {
+        border-radius: 44px;
+        min-height: 580px;
+      }
+
+      .impact-count-box {
+        min-width: 150px;
+        font-size: 50px;
+      }
+
+      .force-circle {
+        width: 170px;
+        height: 170px;
+      }
+
+      .force-main {
+        font-size: 70px;
+      }
+
+      .bottom-value-box {
+        min-width: 122px;
+        font-size: 36px;
+      }
     }
   </style>
 </head>
@@ -249,7 +479,7 @@
     <span>ᛒ ⚡ ◔ 23%</span>
   </div>
 
-  <main class="screen">
+  <main id="measureView" class="view screen active">
     <div class="status">Statut:<strong id="statusText">Déconnecté</strong></div>
     <div class="hint" id="hintText">Cliquer sur "Scanner"</div>
 
@@ -264,6 +494,11 @@
       <button id="scanBtn">Scanner</button>
       <button id="connectBtn">Connecter</button>
       <button id="disconnectBtn">Déconnecter</button>
+    </div>
+
+    <div class="page-tabs">
+      <button id="showMeasureBtn" class="active-tab">Mesures</button>
+      <button id="showSummaryBtn">Accueil</button>
     </div>
 
     <section class="values" aria-label="Mesures reçues par BLE">
@@ -296,6 +531,56 @@
     </div>
   </main>
 
+  <main id="summaryView" class="view summary-screen">
+    <div class="summary-wrap">
+      <section class="summary-card" aria-label="Résumé des impacts">
+        <div class="summary-top">
+          <div class="impact-count-box" id="summaryImpacts">0</div>
+          <div class="summary-title">Nombre d’impacts</div>
+        </div>
+
+        <div class="orange-line"></div>
+
+        <div class="force-zone">
+          <div class="force-circle">
+            <div class="force-main" id="summaryForce">0</div>
+            <div class="force-unit">Kg</div>
+          </div>
+
+          <div class="minmax">
+            <span>Min</span>
+            <span>Max</span>
+          </div>
+
+          <div class="force-bar" aria-label="Barre de force">
+            <div class="force-fill" id="forceFill"></div>
+            <div class="force-marker" id="forceMarker"></div>
+          </div>
+
+          <div class="average-force">
+            Moyenne Force : <span id="summaryAverageForce">0</span> kg
+          </div>
+        </div>
+
+        <div class="summary-bottom">
+          <div class="bottom-cell">
+            <div class="bottom-value-box" id="summaryTime">0’</div>
+            <div class="bottom-label">Temps</div>
+          </div>
+          <div class="bottom-cell">
+            <div class="bottom-value-box" id="summaryFrequency">0</div>
+            <div class="bottom-label">Fréquence<br />moyenne</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="summary-nav">
+        <button id="backToMeasureBtn">Mesures</button>
+        <button class="active-tab">Accueil</button>
+      </div>
+    </div>
+  </main>
+
   <script>
     // UUID repris de ton code Arduino ESP32
     const DEVICE_NAME = "PAO_RJL_BLE";
@@ -309,6 +594,14 @@
       nombreImpulsions: "7c6bb376-7dc6-410d-a88f-f82681e6f02b"
     };
 
+    const FORCE_MAX_KG = 150;
+
+    const measureView = document.getElementById("measureView");
+    const summaryView = document.getElementById("summaryView");
+    const showMeasureBtn = document.getElementById("showMeasureBtn");
+    const showSummaryBtn = document.getElementById("showSummaryBtn");
+    const backToMeasureBtn = document.getElementById("backToMeasureBtn");
+
     const statusText = document.getElementById("statusText");
     const hintText = document.getElementById("hintText");
     const scanBtn = document.getElementById("scanBtn");
@@ -321,10 +614,22 @@
     const impulsionsValue = document.getElementById("impulsionsValue");
     const clock = document.getElementById("clock");
 
+    const summaryImpacts = document.getElementById("summaryImpacts");
+    const summaryForce = document.getElementById("summaryForce");
+    const summaryAverageForce = document.getElementById("summaryAverageForce");
+    const summaryTime = document.getElementById("summaryTime");
+    const summaryFrequency = document.getElementById("summaryFrequency");
+    const forceFill = document.getElementById("forceFill");
+    const forceMarker = document.getElementById("forceMarker");
+
     let bleDevice = null;
     let gattServer = null;
     let chars = {};
     let readInterval = null;
+
+    let lastImpactCount = 0;
+    let forceTotal = 0;
+    let forceSamples = 0;
 
     function updateClock() {
       const now = new Date();
@@ -337,22 +642,34 @@
     updateClock();
     setInterval(updateClock, 15000);
 
+    function showView(viewName) {
+      const showSummary = viewName === "summary";
+      measureView.classList.toggle("active", !showSummary);
+      summaryView.classList.toggle("active", showSummary);
+      showMeasureBtn.classList.toggle("active-tab", !showSummary);
+      showSummaryBtn.classList.toggle("active-tab", showSummary);
+    }
+
     function setStatus(text, hint = "") {
       statusText.textContent = text;
       hintText.textContent = hint;
     }
 
     function resetValues() {
-      forceValue.textContent = "0";
-      dureeValue.textContent = "0";
-      largeurValue.textContent = "0";
-      impulsionsValue.textContent = "0";
+      lastImpactCount = 0;
+      forceTotal = 0;
+      forceSamples = 0;
+      updateDisplayedValues(0, 0, 0, 0);
     }
 
     function formatNumber(value, decimals = 0) {
-      if (!Number.isFinite(value)) return "0";
+      if (!Number.isFinite(value)) return decimals === 0 ? "0" : "0,0";
       if (decimals === 0) return String(Math.round(value));
       return value.toFixed(decimals).replace(".", ",");
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
     }
 
     function dataViewToNumber(dataView) {
@@ -362,13 +679,13 @@
         dataView.byteLength
       );
 
-      // Si un jour l'ESP32 envoie du texte, ça reste compatible.
+      // Compatible avec du texte, si l'ESP32 est modifié plus tard.
       const text = new TextDecoder("utf-8").decode(bytes).trim();
       if (/^-?\d+(\.\d+)?$/.test(text)) {
         return parseFloat(text);
       }
 
-      // Ton code Arduino fait setValue(float), donc on lit un float 32 bits little-endian.
+      // Ton code Arduino fait setValue(float), donc lecture en float 32 bits little-endian.
       if (dataView.byteLength >= 4) {
         return dataView.getFloat32(0, true);
       }
@@ -377,6 +694,40 @@
       if (dataView.byteLength === 1) return dataView.getUint8(0);
 
       return NaN;
+    }
+
+    function updateDisplayedValues(force, duree, largeur, impulsions) {
+      const forceKg = Number.isFinite(force) ? force : 0;
+      const dureeValueNumber = Number.isFinite(duree) ? duree : 0;
+      const largeurValueNumber = Number.isFinite(largeur) ? largeur : 0;
+      const impactCount = Number.isFinite(impulsions) ? Math.round(impulsions) : 0;
+
+      forceValue.textContent = formatNumber(forceKg, 0);
+      dureeValue.textContent = formatNumber(dureeValueNumber, 2);
+      largeurValue.textContent = formatNumber(largeurValueNumber, 0);
+      impulsionsValue.textContent = formatNumber(impactCount, 0);
+
+      if (impactCount > lastImpactCount && forceKg > 0) {
+        forceTotal += forceKg;
+        forceSamples += 1;
+        lastImpactCount = impactCount;
+      } else if (impactCount < lastImpactCount) {
+        lastImpactCount = impactCount;
+        forceTotal = forceKg > 0 ? forceKg : 0;
+        forceSamples = forceKg > 0 ? 1 : 0;
+      }
+
+      const averageForce = forceSamples > 0 ? forceTotal / forceSamples : 0;
+      const frequency = largeurValueNumber > 0 ? 1000 / largeurValueNumber : 0;
+      const percent = clamp((forceKg / FORCE_MAX_KG) * 100, 0, 100);
+
+      summaryImpacts.textContent = formatNumber(impactCount, 0);
+      summaryForce.textContent = formatNumber(forceKg, 0);
+      summaryAverageForce.textContent = formatNumber(averageForce, 0);
+      summaryTime.textContent = formatNumber(dureeValueNumber, 0) + "’";
+      summaryFrequency.textContent = formatNumber(frequency, 1);
+      forceFill.style.width = percent + "%";
+      forceMarker.style.left = percent + "%";
     }
 
     async function scanDevice() {
@@ -442,10 +793,7 @@
         const largeur = dataViewToNumber(await chars.largeurImpulsion.readValue());
         const impulsions = dataViewToNumber(await chars.nombreImpulsions.readValue());
 
-        forceValue.textContent = formatNumber(force, 0);
-        dureeValue.textContent = formatNumber(duree, 2);
-        largeurValue.textContent = formatNumber(largeur, 0);
-        impulsionsValue.textContent = formatNumber(impulsions, 0);
+        updateDisplayedValues(force, duree, largeur, impulsions);
       } catch (error) {
         console.error(error);
         setStatus("Connecté", "Erreur de lecture, nouvelle tentative...");
@@ -475,6 +823,12 @@
     scanBtn.addEventListener("click", scanDevice);
     connectBtn.addEventListener("click", connectDevice);
     disconnectBtn.addEventListener("click", disconnectDevice);
+
+    showMeasureBtn.addEventListener("click", () => showView("measure"));
+    showSummaryBtn.addEventListener("click", () => showView("summary"));
+    backToMeasureBtn.addEventListener("click", () => showView("measure"));
+
+    resetValues();
 
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
