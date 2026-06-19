@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Full Impact - BLE</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#000000" />
+
+  <style>
+    :root {
+      --bg: #000000;
+      --orange: #ff5a00;
+      --blue: #304cc4;
+      --grey: #d8d8d8;
+      --dark-grey: #151515;
+      --text-grey: #222222;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--orange);
+    }
+
+    body {
+      max-width: 430px;
+      margin: 0 auto;
+      border-left: 1px solid #111;
+      border-right: 1px solid #111;
+    }
+
+    .fake-status-bar {
+      height: 24px;
+      background: #4255c7;
+      color: #ffffff;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      letter-spacing: 0.2px;
+    }
+
+    .screen {
+      min-height: calc(100vh - 24px);
+      background: #000;
+      padding-bottom: 18px;
+    }
+
+    .status {
+      padding: 6px 2px 0 2px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .status strong {
+      font-weight: normal;
+    }
+
+    .hint {
+      padding: 4px 2px 2px 2px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .info-bar {
+      height: 28px;
+      background: #d7d7d7;
+      color: #202020;
+      display: grid;
+      grid-template-columns: 1fr 32px 1fr 32px;
+      align-items: center;
+      padding: 0 8px;
+      font-size: 11px;
+      border-top: 1px solid #999;
+      border-bottom: 1px solid #999;
+    }
+
+    .battery {
+      width: 14px;
+      height: 23px;
+      border: 2px solid #777;
+      border-radius: 2px;
+      position: relative;
+      background: #f3f3f3;
+      overflow: hidden;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 3px;
+      width: 6px;
+      height: 3px;
+      background: #777;
+    }
+
+    .battery-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 85%;
+      background: repeating-linear-gradient(
+        to top,
+        #00df5f,
+        #00df5f 3px,
+        #ffffff 3px,
+        #ffffff 5px
+      );
+    }
+
+    .wifi-icon {
+      font-size: 25px;
+      line-height: 1;
+      text-align: center;
+      color: #111;
+      transform: rotate(0deg);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.08fr;
+      gap: 8px;
+      padding: 6px 2px 0 2px;
+    }
+
+    button {
+      height: 33px;
+      background: var(--grey);
+      color: var(--text-grey);
+      border: 1px solid #8d8d8d;
+      border-radius: 2px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .values {
+      padding: 26px 1px 0 1px;
+      font-size: 20px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 126px;
+      align-items: baseline;
+      min-height: 36px;
+    }
+
+    .label {
+      white-space: nowrap;
+    }
+
+    .number {
+      text-align: left;
+      font-size: 24px;
+      color: var(--orange);
+    }
+
+    .graph-placeholder {
+      margin: 28px 51px 0 56px;
+      height: 146px;
+      border-left: 1px solid #101010;
+      border-bottom: 1px solid #101010;
+      background: #000;
+    }
+
+    .brand-card {
+      margin: 16px 51px 0 56px;
+      height: 158px;
+      background: linear-gradient(180deg, #080a05 0%, #030403 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .impact-mark {
+      position: relative;
+      width: 64px;
+      height: 44px;
+      margin-bottom: 10px;
+    }
+
+    .impact-mark span {
+      position: absolute;
+      width: 42px;
+      height: 7px;
+      background: var(--orange);
+      transform: skewX(-35deg) rotate(-40deg);
+      border-radius: 1px;
+    }
+
+    .impact-mark span:nth-child(1) { left: 10px; top: 6px; }
+    .impact-mark span:nth-child(2) { left: 24px; top: 6px; }
+    .impact-mark span:nth-child(3) { left: 0; top: 24px; }
+    .impact-mark span:nth-child(4) { left: 15px; top: 24px; }
+
+    .brand-title {
+      color: #f2f2f2;
+      font-size: 23px;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .brand-subtitle {
+      color: #2571ce;
+      font-size: 10px;
+      margin-top: 7px;
+    }
+
+    .error {
+      color: #ff7a2b;
+    }
+
+    @media (min-height: 760px) {
+      .graph-placeholder { height: 170px; }
+      .brand-card { margin-top: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="fake-status-bar">
+    <span id="clock">--:--</span>
+    <span>✦ ···</span>
+    <span>ᛒ ⚡ ◔ 23%</span>
+  </div>
+
+  <main class="screen">
+    <div class="status">Statut:<strong id="statusText">Déconnecté</strong></div>
+    <div class="hint" id="hintText">Cliquer sur "Scanner"</div>
+
+    <div class="info-bar">
+      <span>Niveau batterie:</span>
+      <div class="battery" aria-label="Batterie"><div class="battery-fill"></div></div>
+      <span>RSSI:</span>
+      <div class="wifi-icon">≋</div>
+    </div>
+
+    <div class="buttons">
+      <button id="scanBtn">Scanner</button>
+      <button id="connectBtn">Connecter</button>
+      <button id="disconnectBtn">Déconnecter</button>
+    </div>
+
+    <section class="values" aria-label="Mesures reçues par BLE">
+      <div class="row">
+        <div class="label">Force :</div>
+        <div class="number" id="forceValue">0</div>
+      </div>
+      <div class="row">
+        <div class="label">Durée :</div>
+        <div class="number" id="dureeValue">0</div>
+      </div>
+      <div class="row">
+        <div class="label">Largeur impulsion:</div>
+        <div class="number" id="largeurValue">0</div>
+      </div>
+      <div class="row">
+        <div class="label">Nombre d'impulsions:</div>
+        <div class="number" id="impulsionsValue">0</div>
+      </div>
+    </section>
+
+    <div class="graph-placeholder"></div>
+
+    <div class="brand-card" aria-label="Full Impact">
+      <div class="impact-mark">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="brand-title">FULL IMPACT</div>
+      <div class="brand-subtitle">Measure your power. Unlock your potential.</div>
+    </div>
+  </main>
+
+  <script>
+    // UUID repris de ton code Arduino ESP32
+    const DEVICE_NAME = "PAO_RJL_BLE";
+
+    const SERVICE_PAO_UUID = "ab78170e-b521-4b20-a9b4-5ddda15d7def";
+
+    const CHARACTERISTICS = {
+      force: "afcddd98-855c-46c4-999e-db6d94000e5e",
+      duree: "0bad9a60-4dac-4d2a-a7ad-e7084646ae0c",
+      largeurImpulsion: "1b58f50a-0bc8-4662-8f54-a21390d9910d",
+      nombreImpulsions: "7c6bb376-7dc6-410d-a88f-f82681e6f02b"
+    };
+
+    const statusText = document.getElementById("statusText");
+    const hintText = document.getElementById("hintText");
+    const scanBtn = document.getElementById("scanBtn");
+    const connectBtn = document.getElementById("connectBtn");
+    const disconnectBtn = document.getElementById("disconnectBtn");
+
+    const forceValue = document.getElementById("forceValue");
+    const dureeValue = document.getElementById("dureeValue");
+    const largeurValue = document.getElementById("largeurValue");
+    const impulsionsValue = document.getElementById("impulsionsValue");
+    const clock = document.getElementById("clock");
+
+    let bleDevice = null;
+    let gattServer = null;
+    let chars = {};
+    let readInterval = null;
+
+    function updateClock() {
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    updateClock();
+    setInterval(updateClock, 15000);
+
+    function setStatus(text, hint = "") {
+      statusText.textContent = text;
+      hintText.textContent = hint;
+    }
+
+    function resetValues() {
+      forceValue.textContent = "0";
+      dureeValue.textContent = "0";
+      largeurValue.textContent = "0";
+      impulsionsValue.textContent = "0";
+    }
+
+    function formatNumber(value, decimals = 0) {
+      if (!Number.isFinite(value)) return "0";
+      if (decimals === 0) return String(Math.round(value));
+      return value.toFixed(decimals).replace(".", ",");
+    }
+
+    function dataViewToNumber(dataView) {
+      const bytes = new Uint8Array(
+        dataView.buffer,
+        dataView.byteOffset,
+        dataView.byteLength
+      );
+
+      // Si un jour l'ESP32 envoie du texte, ça reste compatible.
+      const text = new TextDecoder("utf-8").decode(bytes).trim();
+      if (/^-?\d+(\.\d+)?$/.test(text)) {
+        return parseFloat(text);
+      }
+
+      // Ton code Arduino fait setValue(float), donc on lit un float 32 bits little-endian.
+      if (dataView.byteLength >= 4) {
+        return dataView.getFloat32(0, true);
+      }
+
+      if (dataView.byteLength === 2) return dataView.getInt16(0, true);
+      if (dataView.byteLength === 1) return dataView.getUint8(0);
+
+      return NaN;
+    }
+
+    async function scanDevice() {
+      try {
+        if (!navigator.bluetooth) {
+          setStatus("Déconnecté", "Web Bluetooth non supporté. Utilise Chrome sur Android.");
+          return;
+        }
+
+        setStatus("Scan...", "Sélectionner " + DEVICE_NAME);
+
+        bleDevice = await navigator.bluetooth.requestDevice({
+          filters: [{ name: DEVICE_NAME }],
+          optionalServices: [SERVICE_PAO_UUID]
+        });
+
+        bleDevice.addEventListener("gattserverdisconnected", onDisconnected);
+
+        setStatus("Scanné", "Cliquer sur \"Connecter\"");
+      } catch (error) {
+        console.error(error);
+        setStatus("Déconnecté", "Scan annulé ou ESP32 introuvable");
+      }
+    }
+
+    async function connectDevice() {
+      try {
+        if (!bleDevice) {
+          await scanDevice();
+          if (!bleDevice) return;
+        }
+
+        setStatus("Connexion...", "Connexion à " + bleDevice.name);
+
+        gattServer = await bleDevice.gatt.connect();
+        const service = await gattServer.getPrimaryService(SERVICE_PAO_UUID);
+
+        chars.force = await service.getCharacteristic(CHARACTERISTICS.force);
+        chars.duree = await service.getCharacteristic(CHARACTERISTICS.duree);
+        chars.largeurImpulsion = await service.getCharacteristic(CHARACTERISTICS.largeurImpulsion);
+        chars.nombreImpulsions = await service.getCharacteristic(CHARACTERISTICS.nombreImpulsions);
+
+        setStatus("Connecté", "Lecture des valeurs en cours");
+
+        await readAllValues();
+
+        // Ton code ESP32 expose les valeurs en PROPERTY_READ, pas en NOTIFY.
+        // On relit donc les caractéristiques régulièrement.
+        clearInterval(readInterval);
+        readInterval = setInterval(readAllValues, 500);
+      } catch (error) {
+        console.error(error);
+        setStatus("Déconnecté", "Erreur de connexion BLE");
+      }
+    }
+
+    async function readAllValues() {
+      try {
+        if (!gattServer || !gattServer.connected) return;
+
+        const force = dataViewToNumber(await chars.force.readValue());
+        const duree = dataViewToNumber(await chars.duree.readValue());
+        const largeur = dataViewToNumber(await chars.largeurImpulsion.readValue());
+        const impulsions = dataViewToNumber(await chars.nombreImpulsions.readValue());
+
+        forceValue.textContent = formatNumber(force, 0);
+        dureeValue.textContent = formatNumber(duree, 2);
+        largeurValue.textContent = formatNumber(largeur, 0);
+        impulsionsValue.textContent = formatNumber(impulsions, 0);
+      } catch (error) {
+        console.error(error);
+        setStatus("Connecté", "Erreur de lecture, nouvelle tentative...");
+      }
+    }
+
+    function disconnectDevice() {
+      clearInterval(readInterval);
+      readInterval = null;
+
+      if (bleDevice && bleDevice.gatt.connected) {
+        bleDevice.gatt.disconnect();
+      } else {
+        onDisconnected();
+      }
+    }
+
+    function onDisconnected() {
+      clearInterval(readInterval);
+      readInterval = null;
+      gattServer = null;
+      chars = {};
+      resetValues();
+      setStatus("Déconnecté", "Cliquer sur \"Scanner\"");
+    }
+
+    scanBtn.addEventListener("click", scanDevice);
+    connectBtn.addEventListener("click", connectDevice);
+    disconnectBtn.addEventListener("click", disconnectDevice);
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(console.error);
+      });
+    }
+  </script>
+</body>
+</html>
