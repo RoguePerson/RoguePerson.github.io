@@ -12,8 +12,8 @@
     :root {
       --black: #000000;
       --orange: #ff6500;
-      --blue-ui: #5a9bd2;
-      --blue-border: #3c6f9c;
+      --orange-soft: rgba(255, 101, 0, 0.55);
+      --orange-dim: rgba(255, 101, 0, 0.25);
       --grey: #d8d8d8;
       --text-grey: #222222;
       --white: #ffffff;
@@ -28,48 +28,33 @@
     body {
       margin: 0;
       padding: 0;
+      width: 100%;
       min-height: 100%;
       background: var(--black);
+      color: var(--orange);
       font-family: Arial, Helvetica, sans-serif;
     }
 
     body {
       max-width: 430px;
       margin: 0 auto;
-      border-left: 1px solid #111;
-      border-right: 1px solid #111;
       overflow-x: hidden;
     }
 
-    .fake-status-bar {
-      height: 24px;
-      background: #4255c7;
-      color: #ffffff;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 8px;
-      letter-spacing: 0.2px;
-    }
-
     .view {
-      min-height: calc(100vh - 24px);
+      min-height: 100vh;
       display: none;
+      background: #000;
+      color: var(--orange);
+      padding-bottom: 18px;
     }
 
     .view.active {
       display: block;
     }
 
-    .screen {
-      background: #000;
-      color: var(--orange);
-      padding-bottom: 18px;
-    }
-
     .status {
-      padding: 6px 2px 0 2px;
+      padding: 7px 2px 0 2px;
       font-size: 18px;
       line-height: 1.25;
     }
@@ -165,14 +150,16 @@
       cursor: default;
     }
 
-    .page-tabs {
+    .page-tabs,
+    .page-nav-bottom {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       padding: 7px 2px 0 2px;
     }
 
-    .page-tabs button {
+    .page-tabs button,
+    .page-nav-bottom button {
       background: #151515;
       color: var(--orange);
       border: 1px solid #4b240c;
@@ -180,7 +167,8 @@
       font-weight: bold;
     }
 
-    .page-tabs button.active-tab {
+    .page-tabs button.active-tab,
+    .page-nav-bottom button.active-tab {
       background: var(--orange);
       color: #000;
       border-color: var(--orange);
@@ -262,45 +250,44 @@
       margin-top: 7px;
     }
 
-    .summary-screen {
+    /* PAGE 2 : MESURES, version noir/orange sans fond bleu */
+    .measures-summary {
+      padding: 12px 0 18px 0;
       background: #000;
-      color: var(--white);
-      padding: 6px 0 18px 0;
+      color: var(--orange);
     }
 
-    .summary-wrap {
+    .measure-wrap {
       width: min(100%, 372px);
       margin: 0 auto;
-      padding: 0 1px;
+      padding: 0 2px;
     }
 
-    .summary-card {
-      background: var(--blue-ui);
-      border: 2px solid var(--blue-border);
-      border-radius: 56px;
-      min-height: 610px;
-      overflow: hidden;
-      color: #fff;
+    .measure-card {
+      min-height: 600px;
+      color: var(--orange);
       text-align: center;
       position: relative;
+      padding-bottom: 10px;
     }
 
-    .summary-top {
-      padding: 28px 26px 16px;
-    }
-
-    .impact-count-box,
+    .big-value-box,
     .bottom-value-box {
-      border: 2px solid rgba(37, 82, 125, 0.6);
-      background: rgba(91, 157, 214, 0.55);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+      border: 2px solid var(--orange-soft);
+      color: var(--orange);
+      background: transparent;
       border-radius: 9px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      box-shadow: inset 0 0 18px rgba(255, 101, 0, 0.06);
     }
 
-    .impact-count-box {
+    .measure-top {
+      padding: 18px 24px 16px;
+    }
+
+    .big-value-box {
       min-width: 170px;
       height: 61px;
       font-size: 57px;
@@ -308,16 +295,16 @@
       font-weight: 800;
     }
 
-    .summary-title {
+    .measure-title {
       margin-top: 16px;
       font-size: 25px;
       line-height: 1.1;
       font-weight: 400;
     }
 
-    .orange-line {
+    .orange-separator {
       height: 2px;
-      background: #df7c24;
+      background: var(--orange-soft);
       width: 100%;
     }
 
@@ -329,13 +316,14 @@
       width: 188px;
       height: 188px;
       border-radius: 50%;
-      border: 2px solid rgba(50, 99, 141, 0.8);
+      border: 2px solid var(--orange-soft);
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: rgba(91, 157, 214, 0.25);
+      background: transparent;
+      box-shadow: inset 0 0 20px rgba(255, 101, 0, 0.05);
     }
 
     .force-main {
@@ -343,12 +331,14 @@
       line-height: 0.9;
       font-weight: 800;
       letter-spacing: 1px;
+      color: var(--orange);
     }
 
     .force-unit {
       margin-top: 18px;
       font-size: 22px;
       font-weight: 400;
+      color: var(--orange);
     }
 
     .minmax {
@@ -356,12 +346,13 @@
       justify-content: space-between;
       padding: 26px 3px 8px;
       font-size: 16px;
+      color: var(--orange);
     }
 
     .force-bar {
       height: 31px;
-      border: 2px solid rgba(50, 99, 141, 0.85);
-      background: rgba(91, 157, 214, 0.3);
+      border: 2px solid var(--orange-soft);
+      background: transparent;
       position: relative;
       overflow: hidden;
     }
@@ -378,7 +369,7 @@
       bottom: -3px;
       left: 0%;
       width: 6px;
-      background: #e46a1c;
+      background: var(--orange);
       transform: translateX(-3px);
       border-radius: 2px;
     }
@@ -387,12 +378,13 @@
       margin-top: 8px;
       font-size: 22px;
       line-height: 1.2;
+      color: var(--orange);
     }
 
     .summary-bottom {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      border-top: 2px solid #df7c24;
+      border-top: 2px solid var(--orange-soft);
       min-height: 128px;
       margin-top: 6px;
     }
@@ -406,7 +398,7 @@
     }
 
     .bottom-cell:first-child {
-      border-right: 2px solid #df7c24;
+      border-right: 2px solid var(--orange-soft);
     }
 
     .bottom-value-box {
@@ -421,37 +413,11 @@
       margin-top: 22px;
       font-size: 18px;
       line-height: 1.2;
-    }
-
-    .summary-nav {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 10px;
-      padding: 0 2px;
-    }
-
-    .summary-nav button {
-      background: #151515;
       color: var(--orange);
-      border: 1px solid #4b240c;
-      height: 34px;
-      font-weight: bold;
-    }
-
-    .summary-nav button.active-tab {
-      background: var(--orange);
-      color: #000;
-      border-color: var(--orange);
     }
 
     @media (max-width: 360px) {
-      .summary-card {
-        border-radius: 44px;
-        min-height: 580px;
-      }
-
-      .impact-count-box {
+      .big-value-box {
         min-width: 150px;
         font-size: 50px;
       }
@@ -473,13 +439,8 @@
   </style>
 </head>
 <body>
-  <div class="fake-status-bar">
-    <span id="clock">--:--</span>
-    <span>✦ ···</span>
-    <span>ᛒ ⚡ ◔ 23%</span>
-  </div>
-
-  <main id="measureView" class="view screen active">
+  <!-- PAGE 1 : ACCUEIL -->
+  <main id="homeView" class="view active">
     <div class="status">Statut:<strong id="statusText">Déconnecté</strong></div>
     <div class="hint" id="hintText">Cliquer sur "Scanner"</div>
 
@@ -497,11 +458,11 @@
     </div>
 
     <div class="page-tabs">
-      <button id="showMeasureBtn" class="active-tab">Mesures</button>
-      <button id="showSummaryBtn">Accueil</button>
+      <button id="showHomeBtn" class="active-tab">Accueil</button>
+      <button id="showMeasuresBtn">Mesures</button>
     </div>
 
-    <section class="values" aria-label="Mesures reçues par BLE">
+    <section class="values" aria-label="Valeurs reçues par BLE">
       <div class="row">
         <div class="label">Force :</div>
         <div class="number" id="forceValue">0</div>
@@ -531,15 +492,16 @@
     </div>
   </main>
 
-  <main id="summaryView" class="view summary-screen">
-    <div class="summary-wrap">
-      <section class="summary-card" aria-label="Résumé des impacts">
-        <div class="summary-top">
-          <div class="impact-count-box" id="summaryImpacts">0</div>
-          <div class="summary-title">Nombre d’impacts</div>
+  <!-- PAGE 2 : MESURES -->
+  <main id="measuresView" class="view measures-summary">
+    <div class="measure-wrap">
+      <section class="measure-card" aria-label="Mesures des impacts">
+        <div class="measure-top">
+          <div class="big-value-box" id="summaryImpacts">0</div>
+          <div class="measure-title">Nombre d’impacts</div>
         </div>
 
-        <div class="orange-line"></div>
+        <div class="orange-separator"></div>
 
         <div class="force-zone">
           <div class="force-circle">
@@ -552,7 +514,7 @@
             <span>Max</span>
           </div>
 
-          <div class="force-bar" aria-label="Barre de force">
+          <div class="force-bar" aria-label="Jauge de force">
             <div class="force-fill" id="forceFill"></div>
             <div class="force-marker" id="forceMarker"></div>
           </div>
@@ -574,9 +536,9 @@
         </div>
       </section>
 
-      <div class="summary-nav">
-        <button id="backToMeasureBtn">Mesures</button>
-        <button class="active-tab">Accueil</button>
+      <div class="page-nav-bottom">
+        <button id="backToHomeBtn">Accueil</button>
+        <button class="active-tab">Mesures</button>
       </div>
     </div>
   </main>
@@ -596,11 +558,11 @@
 
     const FORCE_MAX_KG = 150;
 
-    const measureView = document.getElementById("measureView");
-    const summaryView = document.getElementById("summaryView");
-    const showMeasureBtn = document.getElementById("showMeasureBtn");
-    const showSummaryBtn = document.getElementById("showSummaryBtn");
-    const backToMeasureBtn = document.getElementById("backToMeasureBtn");
+    const homeView = document.getElementById("homeView");
+    const measuresView = document.getElementById("measuresView");
+    const showHomeBtn = document.getElementById("showHomeBtn");
+    const showMeasuresBtn = document.getElementById("showMeasuresBtn");
+    const backToHomeBtn = document.getElementById("backToHomeBtn");
 
     const statusText = document.getElementById("statusText");
     const hintText = document.getElementById("hintText");
@@ -612,7 +574,6 @@
     const dureeValue = document.getElementById("dureeValue");
     const largeurValue = document.getElementById("largeurValue");
     const impulsionsValue = document.getElementById("impulsionsValue");
-    const clock = document.getElementById("clock");
 
     const summaryImpacts = document.getElementById("summaryImpacts");
     const summaryForce = document.getElementById("summaryForce");
@@ -631,23 +592,12 @@
     let forceTotal = 0;
     let forceSamples = 0;
 
-    function updateClock() {
-      const now = new Date();
-      clock.textContent = now.toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
-
-    updateClock();
-    setInterval(updateClock, 15000);
-
     function showView(viewName) {
-      const showSummary = viewName === "summary";
-      measureView.classList.toggle("active", !showSummary);
-      summaryView.classList.toggle("active", showSummary);
-      showMeasureBtn.classList.toggle("active-tab", !showSummary);
-      showSummaryBtn.classList.toggle("active-tab", showSummary);
+      const showMeasures = viewName === "measures";
+      homeView.classList.toggle("active", !showMeasures);
+      measuresView.classList.toggle("active", showMeasures);
+      showHomeBtn.classList.toggle("active-tab", !showMeasures);
+      showMeasuresBtn.classList.toggle("active-tab", showMeasures);
     }
 
     function setStatus(text, hint = "") {
@@ -824,9 +774,9 @@
     connectBtn.addEventListener("click", connectDevice);
     disconnectBtn.addEventListener("click", disconnectDevice);
 
-    showMeasureBtn.addEventListener("click", () => showView("measure"));
-    showSummaryBtn.addEventListener("click", () => showView("summary"));
-    backToMeasureBtn.addEventListener("click", () => showView("measure"));
+    showHomeBtn.addEventListener("click", () => showView("home"));
+    showMeasuresBtn.addEventListener("click", () => showView("measures"));
+    backToHomeBtn.addEventListener("click", () => showView("home"));
 
     resetValues();
 

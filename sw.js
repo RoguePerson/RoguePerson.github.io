@@ -1,4 +1,4 @@
-const CACHE_NAME = "full-impact-ble-v2";
+const CACHE_NAME = "full-impact-ble-v3";
 const ASSETS = [
   "./",
   "./index.html",
